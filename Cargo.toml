@@ -2,3 +2,6 @@
 name = "KAREN"
 version = "0.0.4"
 edition = "2024"
+
+[dependencies]
+open = "5.3.3"
