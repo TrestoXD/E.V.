@@ -2,13 +2,14 @@ use std::io::{self, Write};
 fn main() {
     //==Variables==
     let mut _state: bool = true;
+    
 
     // =WELLCOME=
     initialize();
 
     while _state {
         let mut response: String = String::new();
-
+        
         print!("> ");
         io::stdout().flush().unwrap();
 
@@ -22,7 +23,7 @@ fn main() {
 }
 
 fn initialize() {
-    println!("Hola soy");
+    println!("Hola, mi nombre es:");
         println!("=================================
         ");
     println!( r#"    __ __ ___    ____  _______   __
@@ -36,13 +37,31 @@ fn initialize() {
     ");
 }
 
-fn whatmeans(_resp: String) -> bool{
+fn whatmeans(_resp: String,) -> bool{
 
+    //========================VARIABLES========================
+    let _salutations = ["hola", "buenas", "saludos"];
+
+    //===FUNCIONES PRINCIPALES===
     if _resp ==  "exit" {
         println!("Apagando...");
         return false;
-    }else {
-        println!("Disculpame pero no he entendido");
+    }else if _resp == "title" {
+        initialize();
+        return true;}
+
+    //=================================FUNCIONES DE RESPUESTA================================
+
+    //=========================================SALUDOS========================================
+    else if _resp == _salutations[1] || _resp == _salutations[0] || _resp == _salutations[2]{
+        println!("Hola! Como Estas?");   
+        return true;}
+    else if _resp == "version"{
+        println!(env!("CARGO_PKG_VERSION"));
         return true;
     }
+
+    else {
+        println!("Disculpame pero no he entendido");
+        return true;}
 }
