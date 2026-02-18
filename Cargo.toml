@@ -1,7 +1,4 @@
 [package]
-name = "JARVIS"
+name = "KAREN"
 version = "0.0.2"
 edition = "2024"
-
-[dependencies]
-natural-tts = "0.3.1"
