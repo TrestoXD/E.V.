@@ -1,23 +1,48 @@
-use std::io;
+use std::io::{self, Write};
 fn main() {
-    println!("Hola soy KAREN");
+    //==Variables==
+    let mut _state: bool = true;
 
-    println!("Que necesitas?");
+    // =WELLCOME=
+    initialize();
 
-    let mut response = String::new();
+    while _state {
+        let mut response: String = String::new();
 
-    io::stdin()
-        .read_line(&mut response)
-        .expect("Failed to read line");
+        print!("> ");
+        io::stdout().flush().unwrap();
 
-    println!("You Said {response}");
-    whatmeans(response);
+        io::stdin()
+            .read_line(&mut response)
+            .expect("Failed to read line");
+            response = response.trim().to_lowercase();
+
+        _state = whatmeans(response);   
+    }
 }
 
-fn whatmeans(resp: String){
-    println!("Thinking...");
+fn initialize() {
+    println!("Hola soy");
+        println!("=================================
+        ");
+    println!( r#"    __ __ ___    ____  _______   __
+   / //_//   |  / __ \/ ____/ | / /
+  / ,<  / /| | / /_/ / __/ /  |/ / 
+ / /| |/ ___ |/ _, _/ /___/ /|  /  
+/_/ |_/_/  |_/_/ |_/_____/_/ |_/
+    "#);
+    println!("=================================");
+    println!("Que necesitas?
+    ");
+}
 
-    if resp == "Hola"{
-        println!("Hola como estás?")
+fn whatmeans(_resp: String) -> bool{
+
+    if _resp ==  "exit" {
+        println!("Apagando...");
+        return false;
+    }else {
+        println!("Disculpame pero no he entendido");
+        return true;
     }
 }
