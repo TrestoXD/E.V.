@@ -1,4 +1,4 @@
-use std::{io::{self, Write}, str::SplitWhitespace, u8};
+use std::io::{self, Write};
 use open;
 fn main() {
     //==Variables==
@@ -42,21 +42,18 @@ fn initialize() {
 
 // FUNCIONES RELACIONADAS CON EL PROCESAMIENTO DEL TEXTO
 
-fn bananasplit(st:String, id:u8) -> String {
-    let mut i:usize = 0;
-    let mut res: [String; 2] = [; 2];
-    for token in st.split_whitespace(){
-        res[i] = token;
-        i+=1;
-    }
-    return res(id);
+fn bananasplit(st:String) -> String {
+    let mut vec = vec![];
+    vec.push(st);
+    let last = vec.last().unwrap().to_string();
+    return last;
 }
 
-fn whatmeans(_response: String,) -> bool{
+fn whatmeans(_resp: String,) -> bool{
 
     //========================VARIABLES========================
     let _salutations = ["hola", "buenas", "saludos"];
-    let mut _resp: String = bananasplit(_response);
+    let _lastback = bananasplit(_resp.clone());
 
     //===FUNCIONES PRINCIPALES===
     if _resp ==  "exit" {
