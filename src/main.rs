@@ -112,8 +112,8 @@ fn doublefunc(_resp: Vec<String>) -> bool{
             println!("a ver algunos videos");
             open::that("https://www.youtube.com/").unwrap();
             return true;
-        }else if _resp[1] == "Netflix"{
-            println!("a ver algunos videos");
+        }else if _resp[1] == "netflix"{
+            println!("no volverá a ver inside job o si?");
             open::that("https://www.netflix.com/").unwrap();
             return true;
         }
@@ -130,6 +130,37 @@ fn doublefunc(_resp: Vec<String>) -> bool{
         }else if _resp[1] == "soy"{
             println!("No logro reconocerte, asi que deducire que eres mi ensamblador, Vito Minaya González");
             return true;
+        }else if _resp[1] == "es"{
+            if _resp.len() == 2{
+                println!("No logro reconocer a esa persona, mi visión y audio parecen estar desactivados");
+                return true;
+            } else if _resp[2].contains(char::is_whitespace){
+                println!("No logro reconocer a esa persona, mi visión y audio parecen estar desactivados");
+                return true;
+            }else if _resp[2] == "jiayang" || _resp[2] == "yang"{
+                let _name = _resp[2].to_string();
+                println!("{_name}, es su mejor amigo jefe, desea conocer más información de el?");
+                return true;
+            }else if _resp[2] == "alba" || _resp[2] == "rene"{
+                let _name = _resp[2].to_string();
+                println!("{_name}, es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necsita mas información sobre ella.");
+                return true;
+            }else if _resp[2] == "mi"{
+                if _resp.len() == 3{
+                    let _name = _resp[2].to_string();
+                    println!("{_name}? no logro reconocerlo");
+                    return true;
+                }else if _resp[3] == "amor"{
+                    println!("Su Amor jefe, es su amada Alba");
+                    return true;
+                }else {
+                    println!("Eso esta fuera de mi base de datos");
+                    return true;
+                }
+            }else {
+                println!("Esa persona esta fuera de mi base de datos");
+                return true;
+            }
         }
         
         else {
