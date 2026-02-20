@@ -123,6 +123,8 @@ fn doublefunc(_resp: Vec<String>) -> bool{
             println!("Programa no encontrado");
             return true;
         }
+
+    // QUIEN
     }else if _resp[0] == "quien"{
         if _resp[1] == "eres"{
             println!("Mi nombre es KAREN, soy tu asistente aqui disponible para cualquier contenido multimedia que quieras acceder");
@@ -169,6 +171,19 @@ fn doublefunc(_resp: Vec<String>) -> bool{
         }
     }
     
+    if _resp[0] == "buscame" || _resp[0] == "que"{
+        if _resp[1] == "es"{
+            return true;
+        }else if _resp[1] == "platano"{
+            return true;
+        }else {
+            let _name: String = _resp[1].to_string();
+            let _browser:String = "https://duckduckgo.com/?q=".to_string();
+            let path: String = format!("{}{}", _browser, _name);
+            open::that(path).unwrap();
+            return true;
+        }
+    }
     else {
         println!("Disculpame pero no he entendido");
         return true;
