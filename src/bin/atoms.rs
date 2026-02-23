@@ -33,7 +33,7 @@ fn main(){
         }
     }
     // now the events are clear
-
+    
     // here's where we could change the world state and draw.
   }
 }

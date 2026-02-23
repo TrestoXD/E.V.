@@ -1,4 +1,4 @@
-use std::io::{self, Write};
+use std::{io::{self, Write}};
 use open;
 fn main() {
     //==Variables==
@@ -171,21 +171,36 @@ fn doublefunc(_resp: Vec<String>) -> bool{
         }
     }
     
-    if _resp[0] == "buscame" || _resp[0] == "que"{
+    if _resp[0] == "buscar"{
         if _resp[1] == "es"{
             return true;
         }else if _resp[1] == "platano"{
             return true;
         }else {
-            let _name: String = _resp[1].to_string();
-            let _browser:String = "https://duckduckgo.com/?q=".to_string();
-            let path: String = format!("{}{}", _browser, _name);
-            open::that(path).unwrap();
+            open::that(busqueda_web(_resp[1].to_string(), "Default".to_string())).unwrap();
             return true;
         }
     }
     else {
         println!("Disculpame pero no he entendido");
         return true;
+    }
+}
+
+fn busqueda_web(_input:String, _browser:String) -> String{
+    let path:String;
+    let name:String;
+    let result:String;
+
+    if _browser.to_lowercase() == "default"{
+        path = "https://duckduckgo.com/?q=".to_string();
+        name = _input;
+
+        result = format!("{}{}", path, name);   
+        return result;
+    }else {
+        path = "https://duckduckgo.com/?q=".to_string();
+
+        return path;
     }
 }
