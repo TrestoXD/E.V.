@@ -4,4 +4,5 @@ version = "0.0.8"
 edition = "2024"
 
 [dependencies]
+beryllium = "0.13.3"
 open = "5.3.3"
