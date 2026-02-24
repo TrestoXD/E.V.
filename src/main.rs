@@ -1,4 +1,4 @@
-use std::{io::{self, Write}};
+use std::{io::{self, Write}, collections::HashMap};
 use open;
 fn main() {
     //==Variables==
@@ -51,7 +51,7 @@ fn initialize() {
 
 // FUNCIONES RELACIONADAS CON EL PROCESAMIENTO DEL TEXTO
 
-fn bananasplit(st:&str) -> &str {
+fn bananasplit(st: &str) -> &str {
     let mut vec = vec![];
     vec.push(st);
     let last = vec.last().unwrap();
@@ -142,6 +142,15 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
         };
     // QUIEN
     } else if _resp[0] == "quien"{
+        
+        //Más orden y más fácil de meter gente luego, como al marclops
+        let nombres_respuestas = HashMap::from([
+            ("jiayang", "jiayang es su mejor amigo jefe, desea conocer más información de él?"),
+            ("yang", "yang es su mejor amigo jefe, desea conocer más información de él?"),
+            ("alba", "alba es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
+            ("rene", "rene es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
+            ("mi amor", "Su amor jefe, es su amada Alba"),
+            ]);
 
         match _resp[1] {
             "eres" => {
@@ -158,29 +167,11 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
                 if _resp.len() == 2 || _resp[2].contains(char::is_whitespace) {
                     println!("No logro reconocer a esa persona, mi visión y audio parecen estar desactivados");
                     return true;
-                } else if _resp[2] == "jiayang" || _resp[2] == "yang"{
-                    let _name = _resp[2].to_string();
-                    println!("{_name}, es su mejor amigo jefe, desea conocer más información de el?");
-                    return true;
-                }else if _resp[2] == "alba" || _resp[2] == "rene"{
-                    let _name = _resp[2].to_string();
-                    println!("{_name}, es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necsita mas información sobre ella.");
-                    return true;
-                }else if _resp[2] == "mi"{
-                    if _resp.len() == 3{
-                        let _name = _resp[2].to_string();
-                        println!("{_name}? no logro reconocerlo");
-                        return true;
-                    }else if _resp[3] == "amor"{
-                        println!("Su Amor jefe, es su amada Alba");
-                        return true;
-                    }else {
-                        println!("Eso esta fuera de mi base de datos");
-                        return true;
+                } else {
+                    match nombres_respuestas.get(_resp[2]) {
+                        Some(respuesta) => println!("{}", respuesta),
+                        None => println!("Esa persona esta fuera de mi base de datos")
                     }
-                }else {
-                    println!("Esa persona esta fuera de mi base de datos");
-                    return true;
                 }
             },
 
@@ -197,7 +188,7 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
         }else if _resp[1] == "platano"{
             return true;
         }else {
-            open::that(busqueda_web(_resp[1].to_string(), "Default".to_string())).unwrap();
+            open::that(busqueda_web(_resp[1], "Default")).unwrap();
             return true;
         }
     }
@@ -207,20 +198,22 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
     }
 }
 
-fn busqueda_web(_input:String, _browser:String) -> String{
-    let path:String;
-    let name:String;
+fn busqueda_web(_input:&str, _browser:&str) -> String{
+    let path:&str;
+    let name:&str;
     let result:String;
 
     if _browser.to_lowercase() == "default"{
-        path = "https://duckduckgo.com/?q=".to_string();
+        path = "https://duckduckgo.com/?q=";
         name = _input;
 
-        result = format!("{}{}", path, name);   
+        result = path.to_string() + name;   
         return result;
     }else {
-        path = "https://duckduckgo.com/?q=".to_string();
+        //Ahora no importa mucho
+        
+        path = "https://duckduckgo.com/?q=";
 
-        return path;
+        return path.to_owned();
     }
 }
