@@ -159,7 +159,7 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
             },
 
             "soy" => {
-                println!("No logro reconocerte, asi que deducire que eres mi ensamblador, Vito Minaya González");
+                println!("No logro reconocerte, asi que deducire que eres uno de mis ensambladores, Vito Minaya González o Nathan");
                 return true;
             },
 
