@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 beryllium = "0.13.3"
+json = "0.12.4"
 open = "5.3.3"

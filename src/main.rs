@@ -1,9 +1,14 @@
-use std::{io::{self, Write}, collections::HashMap};
+use std::{io::{self, Write}};
 use open;
+
+mod data;
 fn main() {
     //==Variables==
     let mut _state: bool = true;
+
+
     
+    let user_data = data::user_data_initialization();
 
     // =WELLCOME=
     initialize();
@@ -11,6 +16,7 @@ fn main() {
     while _state {
         let mut response: String = String::new();
         
+
         print!("> ");
         io::stdout().flush().unwrap();
 
@@ -27,7 +33,7 @@ fn main() {
         }else{
             //println!("DoubleFunction");
             let collected: Vec<&str> = response.split_whitespace().map(|v| v).collect();
-            _state = doublefunc(collected);
+            _state = doublefunc(collected, &user_data);
         }  
     }
 }
@@ -93,7 +99,7 @@ fn simplefunc(_resp: &str) -> bool{
         return true;}
 }
 
-fn doublefunc(_resp: Vec<&str>) -> bool{   
+fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{   
     //Cambiar los "if" por "match", cuando hay varios casos es mucho más rápido porque solo comprueba el valor 1 vez
     
     //Abrir
@@ -144,13 +150,7 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
     } else if _resp[0] == "quien"{
         
         //Más orden y más fácil de meter gente luego, como al marclops
-        let nombres_respuestas = HashMap::from([
-            ("jiayang", "jiayang es su mejor amigo jefe, desea conocer más información de él?"),
-            ("yang", "yang es su mejor amigo jefe, desea conocer más información de él?"),
-            ("alba", "alba es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
-            ("rene", "rene es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
-            ("mi amor", "Su amor jefe, es su amada Alba"),
-            ]);
+        let nombres_respuestas = data::program_data_initialization();
 
         match _resp[1] {
             "eres" => {
@@ -159,7 +159,8 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
             },
 
             "soy" => {
-                println!("No logro reconocerte, asi que deducire que eres mi ensamblador, Vito Minaya González");
+                let nombre = _user_data["username"].as_str().unwrap();
+                println!("Hola {}, es un placer conocerte, espero poder ayudarte en lo que necesites", nombre);
                 return true;
             },
 
@@ -169,9 +170,10 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
                     return true;
                 } else {
                     match nombres_respuestas.get(_resp[2]) {
-                        Some(respuesta) => println!("{}", respuesta),
-                        None => println!("Esa persona esta fuera de mi base de datos")
+                        Some(respuesta) => println!("{}", respuesta), //NO COMPILA
+                        None => println!("Esa persona esta fuera de mi base de datos") //NO COMPILA
                     }
+                    return true;
                 }
             },
 
@@ -181,8 +183,7 @@ fn doublefunc(_resp: Vec<&str>) -> bool{
             }
         }
     }
-    
-    if _resp[0] == "buscar"{
+    else if _resp[0] == "buscar"{
         if _resp[1] == "es"{
             return true;
         }else if _resp[1] == "platano"{
