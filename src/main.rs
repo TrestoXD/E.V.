@@ -160,7 +160,7 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
 
             "soy" => {
                 let nombre = _user_data["username"].as_str().unwrap();
-                println!("Hola {}, es un placer conocerte, espero poder ayudarte en lo que necesites", nombre);
+                println!("Eres {}, es un placer conocerte, espero poder ayudarte en lo que necesites", nombre);
                 return true;
             },
 
