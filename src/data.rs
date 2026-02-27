@@ -1,17 +1,24 @@
 use std::collections::HashMap;
 use std::fs;
+use std::{io::{Write}};
 use json::{self, JsonValue};
 
-pub fn program_data_initialization() -> HashMap<&'static str, &'static str> {
+
+pub fn program_data_initialization() -> [HashMap<&'static str, &'static str>; 2] {
     let nombres_respuestas = HashMap::from([
-            ("jiayang", "jiayang es su mejor amigo jefe, desea conocer más información de él?"),
             ("yang", "yang es su mejor amigo jefe, desea conocer más información de él?"),
             ("alba", "alba es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
-            ("rene", "rene es el Amor de su vida señor, la razón de su esfuerzo, se encuentra bien? o simplemente necesita más información sobre ella?"),
-            ("mi amor", "Su amor jefe, es su amada Alba"),
     ]);
 
-    return nombres_respuestas;
+    let apodos = HashMap::from([
+        ("jiayang", "yang"),
+        ("yang", "yang"),
+        ("alba", "alba"),
+        ("rene", "alba"),
+        ("mi amor", "alba"),
+    ]);
+
+    return [nombres_respuestas, apodos];
 }
 
 pub fn user_data_initialization() -> JsonValue {
@@ -25,7 +32,8 @@ pub fn user_data_initialization() -> JsonValue {
         },
         Err(_e) => {
             println!("Creando archivo de datos del usuario.");
-            println!("Nombre: ");
+            print!("Nombre: ");
+            std::io::stdout().flush().unwrap();
             let mut nombre = String::new();
             std::io::stdin().read_line(&mut nombre).unwrap();
             let created_data = json::object!{
@@ -36,3 +44,5 @@ pub fn user_data_initialization() -> JsonValue {
         }
     }
 }
+
+
