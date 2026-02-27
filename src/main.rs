@@ -1,14 +1,20 @@
 use std::{io::{self, Write}};
 use open;
+use tokio::runtime::Runtime;
+
+use crate::features::search;
 
 mod data;
+mod features {
+    pub mod search;
+}
 fn main() {
     //==Variables==
     let mut _state: bool = true;
 
 
     
-    let user_data = data::user_data_initialization();
+    let mut _user_data = data::user_data_initialization();
 
     // =WELLCOME=
     initialize();
@@ -29,11 +35,14 @@ fn main() {
 
         if response.contains(char::is_whitespace) == false{
             //println!("Simplefunction")
-            _state = simplefunc(response); 
+            if response != ""{
+                _state = simplefunc(response); 
+            }
+            
         }else{
             //println!("DoubleFunction");
             let collected: Vec<&str> = response.split_whitespace().map(|v| v).collect();
-            _state = doublefunc(collected, &user_data);
+            _state = doublefunc(collected, &_user_data);
         }  
     }
 }
@@ -150,7 +159,9 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
     } else if _resp[0] == "quien"{
         
         //Más orden y más fácil de meter gente luego, como al marclops
-        let nombres_respuestas = data::program_data_initialization();
+        let datos_inicializados = data::program_data_initialization();
+        let nombres_respuestas = &datos_inicializados[0];
+        let apodos = &datos_inicializados[1];
 
         match _resp[1] {
             "eres" => {
@@ -160,7 +171,7 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
 
             "soy" => {
                 let nombre = _user_data["username"].as_str().unwrap();
-                println!("Hola {}, es un placer conocerte, espero poder ayudarte en lo que necesites", nombre);
+                println!("Al parecer te llamas {}, mucho gusto! Aunque me preocupa que no recuerdes tu nombre...", nombre);
                 return true;
             },
 
@@ -170,8 +181,17 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
                     return true;
                 } else {
                     match nombres_respuestas.get(_resp[2]) {
-                        Some(respuesta) => println!("{}", respuesta), //NO COMPILA
-                        None => println!("Esa persona esta fuera de mi base de datos") //NO COMPILA
+                        Some(respuesta) => {println!("{}", respuesta); return true;}, 
+                        None => {}
+                    }
+                    match apodos.get(_resp[2]) {
+                        Some(apodo) => {
+                            match nombres_respuestas.get(apodo) {
+                                Some(respuesta) => {println!("{}", respuesta); return true;}, 
+                                None => println!("No tengo información sobre {}", apodo)
+                            }   
+                        }, 
+                        None => println!("No tengo información sobre {}", _resp[2]) 
                     }
                     return true;
                 }
@@ -183,13 +203,14 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
             }
         }
     }
-    else if _resp[0] == "buscar"{
+    else if _resp[0] == "buscar" || _resp[0] == "busca" {
         if _resp[1] == "es"{
             return true;
         }else if _resp[1] == "platano"{
             return true;
         }else {
-            open::that(busqueda_web(_resp[1], "Default")).unwrap();
+            //open::that(busqueda_web(_resp[1], "Default")).unwrap();
+            Runtime::new().unwrap().block_on(search::search(_resp[1].to_string()));
             return true;
         }
     }
@@ -198,7 +219,7 @@ fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{
         return true;
     }
 }
-
+/* 
 fn busqueda_web(_input:&str, _browser:&str) -> String{
     let path:&str;
     let name:&str;
@@ -217,4 +238,4 @@ fn busqueda_web(_input:&str, _browser:&str) -> String{
 
         return path.to_owned();
     }
-}
+} */
