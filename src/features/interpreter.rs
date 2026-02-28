@@ -48,7 +48,7 @@ pub fn get_function(prompt: &str, user_data: &json::JsonValue) -> (TipoRespuesta
                         return (TipoRespuesta::Hecho, "".to_string());
                     },
                     "soy" => {
-                        println!("Eres {}, es un placer conocerte, espero poder ayudarte en lo que necesites", user_data["nombre"]);
+                        println!("Eres {}, es un placer conocerte, espero poder ayudarte en lo que necesites", user_data["username"]);
                         return (TipoRespuesta::Hecho, "".to_string());
                     },
                     "es" => {
