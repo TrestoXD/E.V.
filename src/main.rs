@@ -2,11 +2,12 @@ use std::{io::{self, Write}};
 use open;
 use tokio::runtime::Runtime;
 
-use crate::features::search;
+use crate::features::{interpreter::{self, get_function}, search};
 
-mod data;
 mod features {
     pub mod search;
+    pub mod interpreter;
+    pub mod data;
 }
 fn main() {
     //==Variables==
@@ -14,7 +15,7 @@ fn main() {
 
 
     
-    let mut _user_data = data::user_data_initialization();
+    let mut _user_data = features::data::user_data_initialization();
 
     // =WELLCOME=
     initialize();
@@ -39,8 +40,7 @@ fn main() {
             }
             
         }else{
-            let collected: Vec<&str> = response.split_whitespace().map(|v| v).collect();
-            _state = doublefunc(collected, &_user_data);
+            _state = doublefunc(response, &_user_data);
         }  
     }
 }
@@ -64,7 +64,7 @@ fn initialize() {
 
 // FUNCIONES RELACIONADAS CON EL PROCESAMIENTO DEL TEXTO
 
-fn bananasplit(st: &str) -> &str {
+fn bananasplit(st: &str) -> &str { //Función obsoleta. Hay que cambiarlo
     let mut vec = vec![];
     vec.push(st);
     let last = vec.last().unwrap();
@@ -79,7 +79,7 @@ fn simplefunc(_resp: &str) -> bool{
     let _lastback = bananasplit(_resp);
 
     //===FUNCIONES PRINCIPALES===
-    if _resp ==  "exit" {
+    if _resp ==  "exit" || _resp == "salir" {
         println!("Apagando...");
         return false;
     }else if _resp == "title" {
@@ -102,107 +102,92 @@ fn simplefunc(_resp: &str) -> bool{
         return true;}
 }
 
-fn doublefunc(_resp: Vec<&str>, _user_data: &json::JsonValue) -> bool{   
-    if _resp[0] == "abre" {
-        match _resp[1] {
-            "spotify" => {
-                println!("Un poco de musica siempre va bien");
-                open::that("https://open.spotify.com/intl-es").unwrap();
-                return true;
-            },
+fn doublefunc(_resp: &str, _user_data: &json::JsonValue) -> bool{   
+    let (tipo_respuesta, objeto) = get_function(_resp, &_user_data);
+    
+    
+    match tipo_respuesta {
+        interpreter::TipoRespuesta::Hecho => {return true;},
+        interpreter::TipoRespuesta::Buscar => {
+            Runtime::new().unwrap().block_on(search::search(objeto));
+            return true;
+        },
+        interpreter::TipoRespuesta::Persona => {
+            let datos_inicializados = features::data::program_data_initialization();
+            let nombres_respuestas = &datos_inicializados[0];
+            let apodos = &datos_inicializados[1];
 
-            "reddit" => {
-                println!("A surfear los foros!");
-                open::that("https://reddit.com").unwrap();
-                return true;
-            },
-
-            "github" => {
-                println!("Que repositorio querra ver, Jefe?");
-                open::that("https://github.com").unwrap();
-                return true;
-            },
-
-            "portafolio" => {
-                println!("Que va a modificar, Jefe?");
-                open::that("https://trestoxd.github.io/Portafolio/").unwrap();
-                return true;
-            },
-
-            "youtube" => {
-                println!("a ver algunos videos");
-                open::that("https://www.youtube.com/").unwrap();
-                return true;
-            },
-
-            "netflix" => {
-                println!("no volverá a ver inside job o si?");
-                open::that("https://www.netflix.com/").unwrap();
-                return true;
+            match nombres_respuestas.get(objeto.as_str()) {
+                Some(respuesta) => {println!("{}", respuesta); return true;}, 
+                None => {}
+            }
+            match apodos.get(objeto.as_str()) {
+                Some(apodo) => {
+                    match nombres_respuestas.get(apodo) {
+                        Some(respuesta) => println!("{}", respuesta), 
+                        None => println!("No tengo información sobre {}, mi visión y audio parecen estar desactivados", apodo)
+                    }   
+                }, 
+                None => println!("No tengo información sobre {}, mi visión y audio parecen estar desactivados", objeto) 
             }
 
-            _ => {
-                println!("Programa no encontrado");
-                return true;
-            },
-        };
-    } else if _resp[0] == "quien"{
-        let datos_inicializados = data::program_data_initialization();
-        let nombres_respuestas = &datos_inicializados[0];
-        let apodos = &datos_inicializados[1];
-
-        match _resp[1] {
-            "eres" => {
-                println!("Mi nombre es KAREN, soy tu asistente aqui disponible para cualquier contenido multimedia que quieras acceder");
-                return true;
-            },
-
-            "soy" => {
-                let nombre = _user_data["username"].as_str().unwrap();
-                println!("Eres {}, es un placer conocerte, espero poder ayudarte en lo que necesites", nombre);
-                return true;
-            },
-
-            "es" => {
-                if _resp.len() == 2 || _resp[2].contains(char::is_whitespace) {
-                    println!("No logro reconocer a esa persona, mi visión y audio parecen estar desactivados");
+            return true;
+        },
+        interpreter::TipoRespuesta::Fecha => {
+            let fecha = chrono::Local::now().format("%d/%m/%Y").to_string();
+            println!("La fecha de hoy es: {}", fecha);
+            return true;
+        },
+        interpreter::TipoRespuesta::Hora => {
+            let hora = chrono::Local::now().format("%H:%M:%S").to_string();
+            println!("Son las {}", hora);
+            return true;
+        },
+        interpreter::TipoRespuesta::Abrir => {
+            match objeto.as_str() {
+                "spotify" => {
+                    println!("Un poco de musica siempre va bien");
+                    open::that("https://open.spotify.com/intl-es").unwrap();
                     return true;
-                } else {
-                    match nombres_respuestas.get(_resp[2]) {
-                        Some(respuesta) => {println!("{}", respuesta); return true;}, 
-                        None => {}
-                    }
-                    match apodos.get(_resp[2]) {
-                        Some(apodo) => {
-                            match nombres_respuestas.get(apodo) {
-                                Some(respuesta) => {println!("{}", respuesta); return true;}, 
-                                None => println!("No tengo información sobre {}", apodo)
-                            }   
-                        }, 
-                        None => println!("No tengo información sobre {}", _resp[2]) 
-                    }
+                },
+
+                "reddit" => {
+                    println!("A surfear los foros!");
+                    open::that("https://reddit.com").unwrap();
+                    return true;
+                },
+
+                "github" => {
+                    println!("Que repositorio querra ver, Jefe?");
+                    open::that("https://github.com").unwrap();
+                    return true;
+                },
+
+                "portafolio" => {
+                    println!("Que va a modificar, Jefe?");
+                    open::that("https://trestoxd.github.io/Portafolio/").unwrap();
+                    return true;
+                },
+
+                "youtube" => {
+                    println!("a ver algunos videos");
+                    open::that("https://www.youtube.com/").unwrap();
+                    return true;
+                },
+
+                "netflix" => {
+                    println!("no volverá a ver inside job o si?");
+                    open::that("https://www.netflix.com/").unwrap();
                     return true;
                 }
-            },
 
-            _ => {
-                println!("No encontrado");
-                return true;
-            }
-        }
+                _ => {
+                    println!("Programa no encontrado");
+                    return true;
+                },
+            };
+        },
+        _ => {return true;}
     }
-    else if _resp[0] == "buscar" || _resp[0] == "busca" {
-        if _resp[1] == "es"{
-            return true;
-        }else if _resp[1] == "platano"{
-            return true;
-        }else {
-            Runtime::new().unwrap().block_on(search::search(_resp[1].to_string()));
-            return true;
-        }
-    }
-    else {
-        println!("Disculpame pero no he entendido");
-        return true;
-    }
+
 }

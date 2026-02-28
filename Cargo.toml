@@ -4,6 +4,7 @@ version = "0.0.9"
 edition = "2024"
 
 [dependencies]
+chrono = "0.4.44"
 json = "0.12.4"
 open = "5.3.3"
 tokio = "1.49.0"
